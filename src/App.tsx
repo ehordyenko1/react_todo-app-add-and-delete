@@ -222,45 +222,46 @@ export const App: React.FC = () => {
             />
           </form>
         </header>
-
-        <section className="todoapp__main" data-cy="TodoList">
-          {filteredTodos.map(todo => (
-            <div
-              key={todo.id}
-              className={`todo ${todo.completed ? 'completed' : ''}`}
-            >
-              <label
-                className="todo__status-label"
-                htmlFor={`todo-checkbox-${todo.id}`}
+        {todos.length > 0 && (
+          <section className="todoapp__main" data-cy="TodoList">
+            {filteredTodos.map(todo => (
+              <div
+                key={todo.id}
+                className={`todo ${todo.completed ? 'completed' : ''}`}
               >
-                <input
-                  id={`todo-checkbox-${todo.id}`}
-                  data-cy="TodoStatus"
-                  type="checkbox"
-                  className="todo__status active"
-                  checked={todo.completed}
-                  disabled={loadingTodoId === todo.id}
-                  onChange={() => handleToggle(todo)}
-                  aria-label={`Mark todo "${todo.title}" as completed`}
-                />
-              </label>
+                <label
+                  className="todo__status-label"
+                  htmlFor={`todo-checkbox-${todo.id}`}
+                >
+                  <input
+                    id={`todo-checkbox-${todo.id}`}
+                    data-cy="TodoStatus"
+                    type="checkbox"
+                    className="todo__status active"
+                    checked={todo.completed}
+                    disabled={loadingTodoId === todo.id}
+                    onChange={() => handleToggle(todo)}
+                    aria-label={`Mark todo "${todo.title}" as completed`}
+                  />
+                </label>
 
-              <span data-cy="TodoTitle" className="todo__title">
-                {todo.title}
-              </span>
+                <span data-cy="TodoTitle" className="todo__title">
+                  {todo.title}
+                </span>
 
-              <button
-                type="button"
-                className="todo__remove"
-                data-cy="TodoDelete"
-                aria-label={`Delete todo: ${todo.title}`}
-                onClick={() => handleDelete(todo.id)}
-              >
-                ×
-              </button>
-            </div>
-          ))}
-        </section>
+                <button
+                  type="button"
+                  className="todo__remove"
+                  data-cy="TodoDelete"
+                  aria-label={`Delete todo: ${todo.title}`}
+                  onClick={() => handleDelete(todo.id)}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </section>
+        )}
 
         {todos.length > 0 && (
           <footer className="todoapp__footer" data-cy="Footer">
