@@ -17,7 +17,6 @@ enum Error {
 const USER_ID = 2495;
 
 export const App: React.FC = () => {
-  const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [loadingTodoId, setLoadingTodoId] = useState<number | null>(null);
@@ -37,6 +36,25 @@ export const App: React.FC = () => {
 
     return undefined;
   }, [errorType]);
+
+  const fetchTodos = () => {
+    setLoading(true);
+
+    client
+      .get<Todo[]>(`/todos?userId=${USER_ID}`)
+      .then(data => {
+        setTodos(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setErrorType(Error.LOAD_TODOS);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
 
   const filteredTodos = todos.filter(todo => {
     if (filter === 'active') {
@@ -114,14 +132,6 @@ export const App: React.FC = () => {
       return;
     }
 
-    const tempTodoObject: Todo = {
-      id: 0,
-      userId: USER_ID,
-      title: title.trim(),
-      completed: false,
-    };
-
-    setTempTodo(tempTodoObject);
     setTitleError(false);
     setErrorType(Error.NONE);
 
@@ -133,33 +143,14 @@ export const App: React.FC = () => {
 
     client
       .post<Todo>('/todos', newTodo)
-      .then(addedTodo => {
-        setTodos(prev => [...prev, addedTodo]);
-        setTempTodo(null);
+      .then(() => {
+        fetchTodos();
         setTitle('');
-        setTitleError(false);
-        setErrorType(Error.NONE);
       })
       .catch(() => {
         setErrorType(Error.ADD_TODO);
-        setTempTodo(null);
       });
   };
-
-  useEffect(() => {
-    setLoading(true);
-
-    client
-      .get<Todo[]>(`/todos?userId=${USER_ID}`)
-      .then(data => {
-        setTodos(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setErrorType(Error.LOAD_TODOS);
-        setLoading(false);
-      });
-  }, []);
 
   if (!USER_ID) {
     return <UserWarning />;
