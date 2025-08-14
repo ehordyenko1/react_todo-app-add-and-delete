@@ -219,6 +219,7 @@ export const App: React.FC = () => {
               <div
                 key={todo.id}
                 className={`todo ${todo.completed ? 'completed' : ''}`}
+                data-cy="Todo"
               >
                 <label
                   className="todo__status-label"
